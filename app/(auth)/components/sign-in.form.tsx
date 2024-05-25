@@ -1,41 +1,92 @@
 
+'use client'
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as  z  from'zod'
+import { signIn } from "@/lib/firebase";
+
 
 const SignInForm = () => {
+
+    const formSchema = z.object({
+        email: z.string().email('Email format is not valid. Example: user@mail.com').min(1,{
+            message:'this field is required'
+        }),
+        password: z.string().min(6,{
+            message:'The password must contain at less 6 characters'
+        })
+    })
+
+
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues:{
+            email:'',
+            password:''
+        }
+    })
+
+    const { register, handleSubmit, formState } = form
+    const { errors } = formState
+
+    // { Sign in }
+
+    const onSubmit = async (user: z.infer<typeof formSchema> )=>{
+        console.log(user)
+
+        try {
+
+           let res = await signIn(user)
+           console.log(res)
+            
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+
   return (
     <>
+
       <div className="text-center">
         <h1 className="text-2xl font-semibold">Sign In</h1>
         <p className="text-sm text-muted-foreground">
           Enter your email and password to sign in
         </p>
       </div>
-      <form>
-        <div className="grid gap-2">
-          {/* Email */}
 
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="grid gap-2">
+
+          {/* Email */}
           <div className="mb-3">
             <Label htmlFor="email">Email</Label>
             <Input
+              {...register('email')}  
               id="email"
               placeholder="name@example.com"
               type="email"
               autoComplete="email"
             />
+            <p className="form-error">{errors.email?.message}</p>
           </div>
 
           {/* Password */}
-
           <div className="mb-3">
             <Label htmlFor="password">Password</Label>
-            <Input id="password"
+            <Input
+            {...register('password')}
+             id="password"
              placeholder="******"
              type="password"
             />
+             <p className="form-error">{errors.password?.message}</p>
           </div>
 
             <Link href='/forgot-password'
@@ -57,9 +108,7 @@ const SignInForm = () => {
             className="underline  underline-offset-4 hover:text-primary"
             >Sing Up
             </Link>
-
         </p>
-
     </>
   );
 };
