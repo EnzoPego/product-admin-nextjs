@@ -36,7 +36,6 @@ const AuthPage = () => {
 
             <SignInForm />
 
-
           </div>
 
         </div>

@@ -7,19 +7,26 @@ import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { signIn } from "@/lib/firebase";
+import { createUser, setDocument, updateUser } from "@/lib/firebase";
 import { useState } from "react";
 import { LoaderCircle } from "lucide-react";
 import toast from "react-hot-toast";
+import { User } from "@/interfaces/user.inteface";
 
 
 
-const SignInForm = () => {
+const SignUpForm = () => {
 
   const [ isLoading, setisLoading ] = useState<boolean>(false)
 
 
   const formSchema = z.object({
+
+    uid: z.string(),
+    name: z.string().min(3, {
+      message: "This field must contain at least 3 characters",
+    }),
+
     email: z
       .string()
       .email("Email format is not valid. Example: user@mail.com")
@@ -35,6 +42,8 @@ const SignInForm = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      uid: '',
+      name: '',
       email: "",
       password: "",
     },
@@ -51,15 +60,18 @@ const SignInForm = () => {
     //console.log(user);
 
     setisLoading(true)
-
+    
     try {
-
-      let res = await signIn(user);
+      let res = await createUser(user);
+      await updateUser({displayName:user.name})
       //console.log(res);
 
+      user.uid = res.user.uid
+      await createUserInDB(user as User)
+      
     } catch (error:any) {
       toast.error(error.message, {duration: 2000})      
-
+      
     }
     finally{
       setisLoading(false)
@@ -67,17 +79,52 @@ const SignInForm = () => {
   };
 
 
+  //{ Create user in Firevbase Database }
+  const createUserInDB = async(user: User)=> {
+    
+    const path = `users/${user.uid}`
+    setisLoading(true)
+    
+    try {
+      delete user.password
+      await setDocument(path,user)
+      toast(`You're welcome, ${user.name}`, {icon:'👋'})
+
+    } catch (error:any) {
+      toast.error(error.message, {duration: 2000})      
+    }
+    finally{
+      setisLoading(false)
+    }
+
+  }
+  
+  
   return (
     <>
       <div className="text-center">
-        <h1 className="text-2xl font-semibold">Sign In</h1>
+        <h1 className="text-2xl font-semibold">Create Account</h1>
         <p className="text-sm text-muted-foreground">
-          Enter your email and password to sign in
+          Enter the following information to create your account
         </p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid gap-2">
+
+            {/* Name */}
+            <div className="mb-3">
+            <Label htmlFor="name">Name</Label>
+            <Input
+              {...register("name")}
+              id="name"
+              placeholder="Jhon Doe"
+              type="text"
+              autoComplete="name"
+            />
+            <p className="form-error">{errors.name?.message}</p>
+          </div>
+
           {/* Email */}
           <div className="mb-3">
             <Label htmlFor="email">Email</Label>
@@ -103,19 +150,12 @@ const SignInForm = () => {
             <p className="form-error">{errors.password?.message}</p>
           </div>
 
-          <Link
-            href="/forgot-password"
-            className="underline text-muted-foreground underline-offset-4 hover:text-primary mb-6 text-sm text-end"
-          >
-            Forgot Password?
-          </Link>
-
           {/* Submit */}
           <Button type="submit" disabled={isLoading}>
             {isLoading && (
               <LoaderCircle className="mr-2 h-4 w-4 animate-spin"/>
             )}
-            Sign In
+            Create 
           </Button>
 
         </div>
@@ -123,16 +163,16 @@ const SignInForm = () => {
 
       {/* Sign In */}
       <p className="text-center text-sm text-muted-foreground">
-        You don't have a account?{" "}
+        Do you alredy have a account?{" "}
         <Link
-          href="/sign-up"
+          href="/"
           className="underline  underline-offset-4 hover:text-primary"
         >
-          Sing Up
+          Sing In
         </Link>
       </p>
     </>
   );
 };
 
-export default SignInForm;
+export default SignUpForm;
