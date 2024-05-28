@@ -41,6 +41,12 @@ export const updateUser = async (user:{displayName?: string | null | undefined;p
   if (auth.currentUser) return updateProfile(auth.currentUser,user )
 }
 
+// sing out
+export const signOutAcount = () => {
+  localStorage.removeItem('user')
+  return auth.signOut()
+}
+
 
 // Database functions
 
