@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { createUserWithEmailAndPassword, getAuth, sendPasswordResetEmail, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { doc, getDoc, getFirestore, serverTimestamp, setDoc } from "firebase/firestore";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -45,6 +45,12 @@ export const updateUser = async (user:{displayName?: string | null | undefined;p
 export const signOutAcount = () => {
   localStorage.removeItem('user')
   return auth.signOut()
+}
+
+
+// send email to reset user's password
+export const sendResetEmail = (email:string) => {
+  return sendPasswordResetEmail(auth,email)
 }
 
 

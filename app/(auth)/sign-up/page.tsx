@@ -1,6 +1,13 @@
 
 import Logo from "@/components/logo";
 import SignUpForm from "./components/sign-up.form";
+import { Metadata } from "next";
+
+export const metadata:Metadata = {
+  title: 'Sign Up',
+  description: 'Sign up to create your product list'
+}
+
 
 const SignUp = () => {
   return (
