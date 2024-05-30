@@ -1,16 +1,16 @@
-'use client'
 
-import { Button } from '@/components/ui/button';
-import { signOutAcount } from '@/lib/firebase';
+import { Navbar } from "@/components/navbar"
+import { Metadata } from "next"
 
+export const metadata:Metadata = {
+  title: 'Dashboard',
+  description: 'Manage yours products'
+}
 
 const Dashboard = () => {
   return (
     <div>
-        <Button
-        onClick={signOutAcount}>
-            Sign Out
-        </Button>
+        <Navbar/>    
     </div>
   )
 }
