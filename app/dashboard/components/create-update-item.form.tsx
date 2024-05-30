@@ -16,7 +16,7 @@ import { CirclePlus } from "lucide-react"
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { createUser, setDocument, updateUser } from "@/lib/firebase";
+import { addDocument, uploadBase64 } from "@/lib/firebase";
 import { useState } from "react";
 import { LoaderCircle } from "lucide-react";
 import toast from "react-hot-toast";
@@ -24,12 +24,14 @@ import { User } from "@/interfaces/user.inteface";
 import { ItemImage } from "@/interfaces/item-image.interface"
 import DragAndDropImage from "@/components/drag-and-drop-image"
 import { useUser } from "@/hooks/use-user"
+import { Product } from "@/interfaces/product.interface"
 
 
 export function CreateUpdateItem() {
 
     const user = useUser()
     const [ isLoading, setisLoading ] = useState<boolean>(false)
+    const [open, setOpen] = useState<boolean>(false)
 
 
     const formSchema = z.object({
@@ -69,37 +71,46 @@ export function CreateUpdateItem() {
     }
 
 
-  
-    
-    
     // { Create or update item }
     const onSubmit = async (item: z.infer<typeof formSchema>) => {
-      console.log(item);
+     // console.log(item);
+     createItem(item)
     };
   
   
-    //{ Create user in Firevbase Database }
-    // const createUserInDB = async(user: User)=> {
+    //{ Create item }
+     const createItem = async(item: Product)=> {
       
-    //   const path = `users/${user.uid}`
-    //   setisLoading(true)
+       const path = `users/${user?.uid}/products`
+       setisLoading(true)
       
-    //   try {
-    //     delete user.password
-    //     await setDocument(path,user)
-    //     toast(`You're welcome, ${user.name}`, {icon:'👋'})
+       try {
+
+        // Update image and get url
+        const base64 = item.image.url
+        const imagePath = item.image.path
+        const imageUrl = await uploadBase64(imagePath,base64)
+
+        item.image.url = imageUrl
+
+       
+        await addDocument(path,item)
+        toast.success('Item created successfully')
+
+        setOpen(false)
+        form.reset()
+        
+       } catch (error:any) {
+         toast.error(error.message, {duration: 2000})      
+       }
+       finally{
+         setisLoading(false)
+       }
   
-    //   } catch (error:any) {
-    //     toast.error(error.message, {duration: 2000})      
-    //   }
-    //   finally{
-    //     setisLoading(false)
-    //   }
-  
-    // }
+    }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen} >
       <DialogTrigger asChild>
         <Button className="px-6">
           Create
