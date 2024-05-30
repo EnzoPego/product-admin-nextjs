@@ -111,6 +111,7 @@ export function ProfileDropdown() {
                   id="files"
                   type="file"
                   className="hidden"
+                  accept="image/png, image/webp, image/jpeg"
                   onChange={(event) => {
                     choseImage(event);
                   }}
