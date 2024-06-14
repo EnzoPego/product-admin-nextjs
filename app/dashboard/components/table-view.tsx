@@ -13,9 +13,10 @@ import {
 import { Product } from "@/interfaces/product.interface"
 import { SquarePen, Trash2 } from "lucide-react"
 import Image from "next/image"
+import { CreateUpdateItem } from './create-update-item.form';
   
   
-  export function TableView({items}:{items:Product[]}) {
+  export function TableView({items,getItems}:{items:Product[],getItems: () => Promise<void>}) {
     return (
       <Table>
         <TableHeader>
@@ -45,10 +46,12 @@ import Image from "next/image"
               <TableCell>{item.soldUnits}</TableCell>
               <TableCell>{formatPrice(item.soldUnits * item.price)}</TableCell>
               <TableCell className="text-center">
-                
-                <Button>
-                   <SquarePen/> 
-                </Button>
+
+                <CreateUpdateItem itemToUpdate={item} getItems={getItems}>
+                  <Button>
+                    <SquarePen/> 
+                  </Button>
+                </CreateUpdateItem>
 
                 <Button className="md:ml-2" variant={"destructive"}> 
                    <Trash2/> 
