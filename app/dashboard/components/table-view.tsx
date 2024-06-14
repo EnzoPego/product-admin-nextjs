@@ -1,13 +1,11 @@
-'use client'
+
 
 import { formatPrice } from "@/actions/format-price"
 import { Button } from "@/components/ui/button"
 import {
     Table,
     TableBody,
-    TableCaption,
     TableCell,
-    TableFooter,
     TableHead,
     TableHeader,
     TableRow,
@@ -52,7 +50,7 @@ import Image from "next/image"
                    <SquarePen/> 
                 </Button>
 
-                <Button className="ml-4" variant={"destructive"}> 
+                <Button className="md:ml-2" variant={"destructive"}> 
                    <Trash2/> 
                 </Button>
                 
