@@ -8,6 +8,7 @@ import { TableView } from "./table-view";
 import { Product } from "@/interfaces/product.interface";
 import { Button } from '@/components/ui/button';
 import { CirclePlus } from 'lucide-react';
+import { orderBy } from 'firebase/firestore';
 
 
 const Items = () => {
@@ -15,11 +16,15 @@ const Items = () => {
   const user = useUser()
   const [items, setItems] = useState<Product[]>([])
 
-  const path = `users/${user?.uid}/products`
   const getItems = async () => {
 
+    const path = `users/${user?.uid}/products`
+    const query = [
+      orderBy('createdAt','desc')
+    ]
+
     try {
-      const res = await getCollection(path) as Product[]
+      const res = await getCollection(path,query) as Product[]
       console.log(res)
 
       setItems(res)
