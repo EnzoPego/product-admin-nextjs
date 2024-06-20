@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { CirclePlus } from "lucide-react"
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -120,6 +119,8 @@ export function CreateUpdateItem({children, itemToUpdate, getItems}:CreateUpdate
         getItems()
         setOpen(false)
         form.reset()
+
+        setImage('')
         
        } catch (error:any) {
          toast.error(error.message, {duration: 2000})      
@@ -155,6 +156,8 @@ export function CreateUpdateItem({children, itemToUpdate, getItems}:CreateUpdate
            getItems()
            setOpen(false)
            form.reset()
+
+           setImage('')
            
           } catch (error:any) {
             toast.error(error.message, {duration: 2000})      
@@ -162,8 +165,7 @@ export function CreateUpdateItem({children, itemToUpdate, getItems}:CreateUpdate
           finally{
             setisLoading(false)
           }
-     
-       }
+        }
 
   return (
     <Dialog open={open} onOpenChange={setOpen} >

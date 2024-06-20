@@ -11,13 +11,25 @@ import {
     TableRow,
   } from "@/components/ui/table"
 import { Product } from "@/interfaces/product.interface"
-import { SquarePen, Trash2 } from "lucide-react"
+import { LayoutList, SquarePen, Trash2 } from "lucide-react"
 import Image from "next/image"
 import { CreateUpdateItem } from './create-update-item.form';
+import { ConfirmDeletion } from "./confirm-deletion"
+import { Skeleton } from "@/components/ui/skeleton"
+
+
+interface TableViewProps {
+  items: Product[],
+  getItems: () => Promise<void>,
+  deleteItem: (item: Product) => Promise<void>
+  isLoading: boolean
+}
   
   
-  export function TableView({items,getItems}:{items:Product[],getItems: () => Promise<void>}) {
+  export function TableView({items,getItems,deleteItem,isLoading}: TableViewProps) {
     return (
+      <>
+      
       <Table>
         <TableHeader>
           <TableRow>
@@ -30,7 +42,7 @@ import { CreateUpdateItem } from './create-update-item.form';
           </TableRow>
         </TableHeader>
         <TableBody>
-          {items.map((item) => (
+          { !isLoading && items && items.map((item) => (
             <TableRow key={item.id}>
               <TableCell>
                 <Image
@@ -47,21 +59,64 @@ import { CreateUpdateItem } from './create-update-item.form';
               <TableCell>{formatPrice(item.soldUnits * item.price)}</TableCell>
               <TableCell className="text-center">
 
+                {/* Update*/}
                 <CreateUpdateItem itemToUpdate={item} getItems={getItems}>
                   <Button>
                     <SquarePen/> 
                   </Button>
                 </CreateUpdateItem>
-
-                <Button className="md:ml-2" variant={"destructive"}> 
-                   <Trash2/> 
-                </Button>
+                
+                {/* Delete */}
+                <ConfirmDeletion
+                  deleteItem={deleteItem}
+                  item={item}
+                >
+                  <Button className="md:ml-2" variant={"destructive"}> 
+                    <Trash2/> 
+                  </Button>
+                </ConfirmDeletion>
                 
               </TableCell>
             </TableRow>
           ))}
+
+
+            {/* Loadiong */}
+
+          {isLoading && [1,1,1,1,1].map(( e ,i ) => (
+          <TableRow key={i}>
+            <TableCell>
+              <Skeleton className="w-16 h-16 rounded-lg"/>
+            </TableCell>
+
+            <TableCell>
+              <Skeleton className="w-full h-4"/>
+            </TableCell>
+            <TableCell>
+              <Skeleton className="w-full h-4"/>
+            </TableCell>
+            <TableCell>
+              <Skeleton className="w-full h-4"/>
+            </TableCell>
+            <TableCell>
+              <Skeleton className="w-full h-4"/>
+            </TableCell>
+          </TableRow>
+          ))}
+
         </TableBody>
       </Table>
+      
+          {!isLoading && items.length === 0 && 
+            <div className="text-gray-200 my-20">
+              <div className="flex justify-center">
+                <LayoutList className="w-[120px] h-[120px] " />
+              </div>
+              <h2 className="text-center">No items available</h2>
+
+            </div>
+          }
+      </>
     )
   }
   

@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { createUserWithEmailAndPassword, getAuth, sendPasswordResetEmail, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { addDoc, collection, doc, getDoc, getDocs, getFirestore, query, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, getFirestore, query, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
 import { getStorage, uploadString,getDownloadURL, ref} from "firebase/storage";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -86,6 +86,11 @@ export const setDocument = (path:string, data:any) => {
 // Update a document in a collection
 export const updateDocument = (path:string, data:any) => {
   return updateDoc(doc(db,path),data)
+}
+
+// Delete a document from a collection
+export const deleteDocument = (path:string) => {
+  return deleteDoc(doc(db,path))
 }
 
 
