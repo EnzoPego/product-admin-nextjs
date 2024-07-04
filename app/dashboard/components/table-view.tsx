@@ -28,7 +28,7 @@ interface TableViewProps {
   
   export function TableView({items,getItems,deleteItem,isLoading}: TableViewProps) {
     return (
-      <>
+      <div className="hidden md:block ">
       
       <Table>
         <TableHeader>
@@ -116,7 +116,7 @@ interface TableViewProps {
 
             </div>
           }
-      </>
+      </div>
     )
   }
   

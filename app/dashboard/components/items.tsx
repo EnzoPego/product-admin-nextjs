@@ -12,6 +12,7 @@ import { orderBy } from 'firebase/firestore';
 import toast from 'react-hot-toast';
 import { Badge } from '@/components/ui/badge';
 import { formatPrice } from '@/actions/format-price';
+import ListView from './list-view';
 
 
 const Items = () => {
@@ -105,6 +106,13 @@ const Items = () => {
       isLoading={isLoading}
       />
 
+      <ListView
+       items={items} 
+       getItems={getItems} 
+       deleteItem={deleteItem}
+       isLoading={isLoading}
+      />
+      
     </>
   );
 };
